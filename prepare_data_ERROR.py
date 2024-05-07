@@ -35,7 +35,6 @@ def prepare_video_directory(recording_map, recording_type, split_type, base_path
                     print(f"File already exists: {train_recording_path}")
 
 
-
 def prepare_data_splits_for_splits(split_type, activity_id, recording_num_list):
     total_recordings = len(recording_num_list)
     train_recordings = int(0.6 * total_recordings)
