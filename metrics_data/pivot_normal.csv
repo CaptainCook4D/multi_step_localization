@@ -1,0 +1,4 @@
+,,Recall@1x,Recall@1x,Recall@1x,Recall@1x,Recall@1x,Recall@5x,Recall@5x,Recall@5x,Recall@5x,Recall@5x,mAP,mAP,mAP,mAP,mAP
+IoU,,0.1,0.2,0.3,0.4,0.5,0.1,0.2,0.3,0.4,0.5,0.1,0.2,0.3,0.4,0.5
+Backbone,DivisionType,,,,,,,,,,,,,,,
+omnivore_4s,recordings,73.9,73.27,69.26,64.78,60.58,86.79,83.96,81.59,79.54,75.93,69.39,68.38,66.54,63.03,59.53
