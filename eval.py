@@ -12,18 +12,16 @@ import torch.backends.cudnn as cudnn
 import torch.utils.data
 
 # our code
-from libs.core import load_config
-from libs.datasets import make_dataset, make_data_loader
-from libs.modeling import make_meta_arch
-from libs.utils import valid_one_epoch, ANETdetection, fix_random_seed
+from actionformer.libs.core import load_config
+from actionformer.libs.datasets import make_dataset, make_data_loader
+from actionformer.libs.modeling import make_meta_arch
+from actionformer.libs.utils import valid_one_epoch, ANETdetection, fix_random_seed
 
 
 ################################################################################
 def main(args):
     """0. load config"""
     # ToDo:
-    # args.epoch = 21  # Best epoch for omnivore_epic
-    # args.epoch = 35  # Best epoch for omnivore_ego4d
     # sanity check
     if os.path.isfile(args.config):
         cfg = load_config(args.config)
@@ -66,9 +64,7 @@ def main(args):
     else:
         assert os.path.isdir(args.ckpt), "CKPT file folder does not exist!"
         if args.epoch > 0:
-            ckpt_file = os.path.join(
-                args.ckpt, 'epoch_{:03d}.pth.tar'.format(args.epoch)
-            )
+            ckpt_file = os.path.join(args.ckpt, 'epoch_{:03d}.pth.tar'.format(args.epoch))
         else:
             ckpt_file_list = sorted(glob.glob(os.path.join(args.ckpt, '*.pth.tar')))
             ckpt_file = ckpt_file_list[-1]

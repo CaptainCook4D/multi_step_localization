@@ -17,8 +17,8 @@ from actionformer.libs.core import load_config
 from actionformer.libs.datasets import make_dataset, make_data_loader
 from actionformer.libs.modeling import make_meta_arch
 from actionformer.libs.utils import (train_one_epoch, valid_one_epoch, ANETdetection,
-                        save_checkpoint, make_optimizer, make_scheduler,
-                        fix_random_seed, ModelEma)
+                                     save_checkpoint, make_optimizer, make_scheduler,
+                                     fix_random_seed, ModelEma)
 
 
 ################################################################################
@@ -75,8 +75,7 @@ def main(args):
     cfg_filename = os.path.basename(args.config).replace('.yaml', '')
     if len(args.output) == 0:
         ts = datetime.datetime.fromtimestamp(int(time.time()))
-        ckpt_folder = os.path.join(
-            cfg['output_folder'], cfg['dataset_name'], cfg_filename + '_' + str(ts))
+        ckpt_folder = os.path.join(cfg['output_folder'], cfg['dataset_name'], cfg_filename + '_' + str(ts))
     else:
         ckpt_folder = os.path.join(
             cfg['output_folder'], cfg['dataset_name'],
@@ -103,8 +102,7 @@ def main(args):
     cfg['model']['train_cfg']['head_empty_cls'] = train_db_vars['empty_label_ids']
 
     # data loaders
-    train_loader = make_data_loader(
-        train_dataset, True, rng_generator, **cfg['loader'])
+    train_loader = make_data_loader(train_dataset, True, rng_generator, **cfg['loader'])
 
     """3. create model, optimizer, and scheduler"""
     # model
@@ -126,9 +124,7 @@ def main(args):
     if args.resume:
         if os.path.isfile(args.resume):
             # load ckpt, reset epoch / best rmse
-            checkpoint = torch.load(args.resume,
-                map_location = lambda storage, loc: storage.cuda(
-                    cfg['devices'][0]))
+            checkpoint = torch.load(args.resume,map_location=lambda storage, loc: storage.cuda(cfg['devices'][0]))
             args.start_epoch = checkpoint['epoch']
             model.load_state_dict(checkpoint['state_dict'])
             model_ema.module.load_state_dict(checkpoint['state_dict_ema'])
@@ -149,7 +145,7 @@ def main(args):
         fid.flush()
 
     """4. training / validation loop"""
-    print("\nStart training model {:s} ...".format(cfg['model_name']))
+    print("\n Start training model {:s} ...".format(cfg['model_name']))
 
     # start training
     max_epochs = cfg['opt'].get(
@@ -164,25 +160,25 @@ def main(args):
             optimizer,
             scheduler,
             epoch,
-            model_ema = model_ema,
-            clip_grad_l2norm = cfg['train_cfg']['clip_grad_l2norm'],
+            model_ema=model_ema,
+            clip_grad_l2norm=cfg['train_cfg']['clip_grad_l2norm'],
             tb_writer=tb_writer,
             print_freq=args.print_freq
         )
 
         # save ckpt once in a while
         if (
-            ((epoch + 1) == max_epochs) or
-            ((args.ckpt_freq > 0) and ((epoch + 1) % args.ckpt_freq == 0))
+                ((epoch + 1) == max_epochs) or
+                ((args.ckpt_freq > 0) and ((epoch + 1) % args.ckpt_freq == 0))
         ):
             save_states = {
                 'epoch': epoch + 1,
                 'state_dict': model.state_dict(),
                 'scheduler': scheduler.state_dict(),
                 'optimizer': optimizer.state_dict(),
+                'state_dict_ema': model_ema.module.state_dict()
             }
 
-            save_states['state_dict_ema'] = model_ema.module.state_dict()
             save_checkpoint(
                 save_states,
                 False,
@@ -190,17 +186,17 @@ def main(args):
                 file_name='epoch_{:03d}.pth.tar'.format(epoch + 1)
             )
 
-    # wrap up
     tb_writer.close()
     print("All done!")
     return
+
 
 ################################################################################
 if __name__ == '__main__':
     """Entry Point"""
     # the arg parser
     parser = argparse.ArgumentParser(
-      description='Train a point-based transformer for action localization')
+        description='Train a point-based transformer for action localization')
     parser.add_argument('config', metavar='DIR',
                         help='path to a config file')
     parser.add_argument('-p', '--print-freq', default=10, type=int,
@@ -216,10 +212,10 @@ if __name__ == '__main__':
                         choices=['omnivore', '3dresnet', 'videomae', 'slowfast', 'x3d'])
     parser.add_argument('--division_type', default='recordings', type=str,
                         choices=['recordings', 'person', 'environment', 'recipes'])
-    parser.add_argument('--feat_folder', default='features', type=str,)
+    parser.add_argument('--feat_folder', default='features', type=str, )
 
     # Default is 30 for all backbones
     parser.add_argument('--num_frames', default=30, type=int, )
-    parser.add_argument('--stride', default=30, type=int,)
+    parser.add_argument('--stride', default=30, type=int, )
     args = parser.parse_args()
     main(args)
